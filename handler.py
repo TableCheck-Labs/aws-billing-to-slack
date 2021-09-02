@@ -177,7 +177,7 @@ def report_cost(event, context, result: dict = None, yesterday: str = None, new_
                    f"${allowed_credits_per_day:,.2f} for the day."
                   )
     else:
-        summary = f"Yesterday's cost for account {account_name} was ${total_costs[-1]:,.2f}"
+        summary = f"Yesterday's cost for account {account_name} was ${total_costs[-1]:,.2f}.\nPricing is not accurate to EOM costs due to billing delays."
 
     hook_url = os.environ.get('SLACK_WEBHOOK_URL')
     if hook_url:
