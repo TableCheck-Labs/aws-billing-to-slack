@@ -36,7 +36,7 @@ functions:
 
     environment:
       SLACK_WEBHOOK_URL: ${opt:slack_url, env:slack_url}
-      AWS_ACCOUNT_NAME: ${opt:aws_account, env:slack_url, 'default'}
+      AWS_ACCOUNT_NAME: ${env:custom_aws_account_name, opt:aws_account, env:AWS_PROFILE, 'default'}
       CREDITS_EXPIRE_DATE: ${opt:credits_expire_date, env:credits_expire_date}
       CREDITS_REMAINING_AS_OF: ${opt:credits_remaining_date, env:credits_expire_date}
       CREDITS_REMAINING: ${opt:credits_remaining, env:credits_remaining}
