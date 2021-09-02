@@ -70,12 +70,3 @@ With none of the folling arguments passed (--aws_account, --aws_profile, --aws_r
         --aws_profile="default" \
         --aws_region="eu-west-1"
     ```
-
-## Authors
-
-- [Alex Ley](https://github.com/Alex-ley)
-- [Enrico Stahn](https://github.com/estahn)
-- [Ian Dees](https://github.com/iandees)
-- [Regis Wilson](https://github.com/rwilson-release)
-- [Rui Pinho](https://github.com/ruiseek)
-- [Tamas Flamich](https://github.com/tamasflamich)
