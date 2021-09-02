@@ -9,8 +9,7 @@ n_days = 7
 yesterday = datetime.datetime.today() - datetime.timedelta(days=1)
 week_ago = yesterday - datetime.timedelta(days=n_days)
 
-# It seems that the sparkline symbols don't line up (probalby based on font?) so put them last
-# Also, leaving out the full block because Slack doesn't like it: '█'
+# it seems that the sparkline symbols don't line up (probably based on font?) so put them last
 sparks = ['▁', '▂', '▃', '▄', '▅', '▆', '▇']
 
 def sparkline(datapoints):
@@ -29,7 +28,6 @@ def sparkline(datapoints):
 
 def delta(costs):
     if (len(costs) > 1 and costs[-1] >= 1 and costs[-2] >= 1):
-        # This only handles positive numbers
         result = ((costs[-1]/costs[-2])-1)*100.0
     else:
         result = 0
@@ -43,15 +41,13 @@ def report_cost(event, context, result: dict = None, yesterday: str = None, new_
         yesterday = datetime.datetime.strptime(yesterday, '%Y-%m-%d')
 
     week_ago = yesterday - datetime.timedelta(days=n_days)
-    # Generate list of dates, so that even if our data is sparse,
-    # we have the correct length lists of costs (len is n_days)
+    # generate list of all dates in range
     list_of_dates = [
         (week_ago + datetime.timedelta(days=x)).strftime('%Y-%m-%d')
         for x in range(n_days)
     ]
     print(list_of_dates)
 
-    # Get account account name from env, or account id/account alias from boto3
     account_name = os.environ.get("AWS_ACCOUNT_NAME", None)
     if account_name is None:
         iam = boto3.client("iam")
@@ -110,9 +106,7 @@ def report_cost(event, context, result: dict = None, yesterday: str = None, new_
                 cost = float(group['Metrics']['UnblendedCost']['Amount'])
                 cost_per_day_by_service[key].append(cost)
     else:
-        # New method, which first creates a dict of dicts
-        # then loop over the services and loop over the list_of_dates
-        # and this means even for sparse data we get a full list of costs
+        # loop over each service and the list_of_dates to get a full list of costs
         cost_per_day_dict = defaultdict(dict)
 
         for day in result['ResultsByTime']:
@@ -127,7 +121,7 @@ def report_cost(event, context, result: dict = None, yesterday: str = None, new_
                 cost = cost_per_day_dict[key].get(start_date, 0.0) # fallback for sparse data
                 cost_per_day_by_service[key].append(cost)
 
-    # Sort the map by yesterday's cost
+    # sort the map by yesterday's cost
     most_expensive_yesterday = sorted(cost_per_day_by_service.items(), key=lambda i: i[1][-1], reverse=True)
 
     service_names = [k for k,_ in most_expensive_yesterday[:5]]
@@ -211,14 +205,9 @@ if __name__ == "__main__":
     with open("example_boto3_result2.json", "r") as f:
         example_result2 = json.load(f)
 
-    # New Method with 2 example jsons
+def test():
+    # run sample tests
     cost_dict = report_cost(None, None, example_result, yesterday="2021-08-23", new_method=True)
     assert "{0:.2f}".format(cost_dict.get("total", 0.0)) == "286.37", f'{cost_dict.get("total"):,.2f} != 286.37'    
     cost_dict = report_cost(None, None, example_result2, yesterday="2021-08-29", new_method=True)
-    assert "{0:.2f}".format(cost_dict.get("total", 0.0)) == "21.45", f'{cost_dict.get("total"):,.2f} != 21.45'
-
-    # Old Method with same jsons (will fail)
-    cost_dict = report_cost(None, None, example_result, yesterday="2021-08-23", new_method=False)
-    assert "{0:.2f}".format(cost_dict.get("total", 0.0)) == "286.37", f'{cost_dict.get("total"):,.2f} != 286.37' 
-    cost_dict = report_cost(None, None, example_result2, yesterday="2021-08-29", new_method=False)
     assert "{0:.2f}".format(cost_dict.get("total", 0.0)) == "21.45", f'{cost_dict.get("total"):,.2f} != 21.45'
