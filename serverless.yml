@@ -1,13 +1,11 @@
 service: aws-billing-to-slack
 
-plugins:
-  - serverless-python-requirements
 provider:
   name: aws
   # Sane defaults, easy for multi-account/multi-region organizations
   profile: ${opt:aws_profile, env:AWS_PROFILE, 'default'}
   region: ${opt:aws_region, env:AWS_REGION, env:AWS_DEFAULT_REGION, 'us-east-1'}
-  runtime: python3.7
+  runtime: python3.14
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -35,8 +33,8 @@ functions:
       - schedule: cron(16 8 * * ? *)
 
     environment:
-      SLACK_WEBHOOK_URL: ${opt:slack_url, env:slack_url}
+      SLACK_WEBHOOK_URL: ${opt:slack_url, env:slack_url, ''}
       AWS_ACCOUNT_NAME: ${env:custom_aws_account_name, opt:aws_account, env:AWS_PROFILE, 'default'}
-      CREDITS_EXPIRE_DATE: ${opt:credits_expire_date, env:credits_expire_date}
-      CREDITS_REMAINING_AS_OF: ${opt:credits_remaining_date, env:credits_expire_date}
-      CREDITS_REMAINING: ${opt:credits_remaining, env:credits_remaining}
+      CREDITS_EXPIRE_DATE: ${opt:credits_expire_date, env:credits_expire_date, ''}
+      CREDITS_REMAINING_AS_OF: ${opt:credits_remaining_date, env:credits_expire_date, ''}
+      CREDITS_REMAINING: ${opt:credits_remaining, env:credits_remaining, ''}
