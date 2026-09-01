@@ -24,7 +24,7 @@ Sends daily breakdowns of AWS costs to a Slack channel.
     ```
 
 1. Install pipenv
-   
+
     ```
     pip install pipenv
     ```
@@ -44,7 +44,7 @@ Sends daily breakdowns of AWS costs to a Slack channel.
     You can also run it once to verify that it works:
 
     ```
-    serverless invoke --function report_cost --slack_url="https://hooks.slack.com/services/xxx/yyy/zzzz"
+    serverless invoke --function report_cost --data'{"https://hooks.slack.com/services/xxx/yyy/zzzz"}'
     ```
 
 ## Support for AWS Credits
